@@ -1,0 +1,29 @@
+Author: Eric Pruitt, https://github.com/ericpruitt/
+Description: Adds a signal handler for SIGHUP that causes dwm to shutdown
+cleanly.
+
+diff --git a/dwm.c b/dwm.c
+index b2bc9bd..0be9bc9 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -1271,6 +1271,11 @@ quit(const Arg *arg)
+ 	running = 0;
+ }
+ 
++void
++sighup_handler(int ignored) {
++	running = False;
++}
++
+ Monitor *
+ recttomon(int x, int y, int w, int h)
+ {
+@@ -1553,6 +1558,8 @@ setup(void)
+ 
+ 	/* clean up any zombies immediately */
+ 	sigchld(0);
++	/* Exit cleanly on SIGHUP */
++	signal(SIGHUP, sighup_handler);
+ 
+ 	/* init screen */
+ 	screen = DefaultScreen(dpy);

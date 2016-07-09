@@ -1,0 +1,21 @@
+Author: Eric Pruitt, https://github.com/ericpruitt/
+Description: Some poorly behaved applications (Steam, Chromium) unnecessarily
+emit a _NET_ACTIVE_WINDOW event when focused or clicked causing dwm to pop the
+window and re-order the window list. This patch changes dwm's behaviour so
+_NET_ACTIVE_WINDOW messages result in "focus" being called on a window without
+popping it to prevent unwanted reordering.
+
+diff --git a/dwm.c b/dwm.c
+index ffc8864..db2d7a5 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -531,7 +531,8 @@ clientmessage(XEvent *e) {
+ 			c->mon->seltags ^= 1;
+ 			c->mon->tagset[c->mon->seltags] = c->tags;
+ 		}
+-		pop(c);
++		focus(c);
++		arrange(c->mon);
+ 	}
+ }
+ 
